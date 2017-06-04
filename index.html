@@ -339,7 +339,10 @@
 				var bullet = new THREE.Mesh(new THREE.SphereGeometry(0.05,4,4),new THREE.MeshBasicMaterial({color:0x000}));
 				camera.updateMatrixWorld();
 				bullet.position.set(camera.getWorldPosition().x, camera.getWorldPosition().y, camera.getWorldPosition().z);
-				bullet.velocity = new THREE.Vector3(camera.getWorldDirection().x*10,camera.getWorldDirection().y*10,camera.getWorldDirection().z*10);
+				bullet.velocity = new THREE.Vector3(camera.getWorldDirection().x*5,camera.getWorldDirection().y*10,camera.getWorldDirection().z*5);
+				bullet.alive = true;
+				setTimeout(function(){bullet.alive = false;scene.remove(bullet);}, 1000);
+				bullet.ray = new THREE.Ray( bullet.position, bullet.velocity.normalize());
 				bullets.push(bullet);
 				scene.add(bullet);
 				/*raycasty samo zuo
@@ -368,6 +371,17 @@
 
 			}
 			
+			
+			function dist(v1, v2)
+			{
+				deltaX = v2.x - v1.x;
+				deltaY = v2.y - v1.y;
+				deltaZ = v2.z - v1.z;
+
+				distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+
+				return distance;
+			}
 			
 			
 
@@ -422,48 +436,35 @@
 					for(var i=0; i<bullets.length; i++)
 					{
 						if( bullets[i] === undefined ) continue;
-						var b = bullets[i], p = b.position;
-						for (var j = enemies.length-1; j >= 0; j--)
-						{
-							var a = enemies[j];
-							var v = a.geometry.vertices[0];
-							var c = a.position;
-							var x = Math.abs(v.x), z = Math.abs(v.z);
-							//console.log(Math.round(p.x), Math.round(p.z), c.x, c.z, x, z);
-							if (p.x < c.x + x && p.x > c.x - x &&
-									p.z < c.z + z && p.z > c.z - z) 
-									{
-								bullets.splice(i, 1);
-								var eX = a.position.x;
-								var eY = a.position.y;
-								scene.remove(b);
-								scene.remove(a);
-								break;
-							}
+						if( bullets[i].alive == false ){
+							bullets.splice(i,1);
+							continue;
 						}
 						bullets[i].position.add(bullets[i].velocity);
-						var b = bullets[i], p = b.position;
+						var b = bullets[i], bullet_pos = b.position;
 						for (var j = enemies.length-1; j >= 0; j--)
 						{
-							var a = enemies[j];
-							var v = a.geometry.vertices[0];
-							var c = a.position;
-							var x = Math.abs(v.x), z = Math.abs(v.z);
+							var enemy = enemies[j];
+							var v = enemy.geometry.vertices[0];
+							var enemy_pos = enemy.position;
+							var x = Math.abs(v.x);
+							var z = Math.abs(v.z);
 							//console.log(Math.round(p.x), Math.round(p.z), c.x, c.z, x, z);
-							if (p.x < c.x + x && p.x > c.x - x &&
-									p.z < c.z + z && p.z > c.z - z) 
-									{
+							var bbox = new THREE.Box3().setFromObject(enemy);
+							if (b.ray.intersectsBox(bbox))    
+							{
+								if(dist(b.getWorldPosition(), enemy.getWorldPosition())<=bbox.getSize().x)
+								{
 								bullets.splice(i, 1);
-								var eX = a.position.x;
-								var eY = a.position.y;
 								scene.remove(b);
-								scene.remove(a);
+								scene.remove(enemy);
 								break;
+								}
 							}
 						}
 					}
 									
-					loadedObject.rotation.y = rot.y + (Math.PI / 2) + 0.35;
+					loadedObject.rotation.y = rot.y + (Math.PI / 2) + 1;
 
 
 					if ( controls.getObject().position.y < 10 ) {
