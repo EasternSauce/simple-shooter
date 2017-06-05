@@ -108,8 +108,8 @@
 			var colors = [0xFF0FFF, 0xCCFF00, 0xFF000F, 0x996600, 0xFFFFFF];
 			var animLoader = new THREE.JSONLoader();
 			/////////////////////////////////
-			var dirs = [];
-			var parts = [];
+			
+		    
 
 			var raycaster;
 
@@ -484,6 +484,13 @@
 							{
 								if(dist(b.getWorldPosition(), enemy.getWorldPosition())<=bbox.getSize().x)
 								{
+									var audio = document.createElement('audio');
+									var source = document.createElement('source');
+									var count = Math.floor(Math.random()*13+1);
+									console.log('./sounds/s'+count+'.wav');
+									source.src = './sounds/s'+count+'.wav';
+									audio.appendChild(source);
+									audio.play();
 									var loader = new THREE.JSONLoader();
 									loader.load( "flamingo.js", function( geometry ) {
 
