@@ -342,16 +342,14 @@
 
 				window.addEventListener( 'resize', onWindowResize, false );
 				
-				var nr = Math.random()*13+1;
-									sound = './sounds/s'+nr+'.wav';
-									var audioLoader = new THREE.AudioLoader();
-									var sound1 = new THREE.PositionalAudio( listener );
-									audioLoader.load( sound, function( buffer ) {
-										sound1.setBuffer( buffer );
-										sound1.setRefDistance( 20 );
-										sound1.play();
-									});
-									camera.add(sound1);
+				var audio = document.createElement('audio');
+									var source = document.createElement('source');
+									var count = Math.floor(Math.random()*13+1);
+									//source.src = './sounds/s'+count+'.wav';
+									source.src = './sounds/background.mp3';
+									audio.appendChild(source);
+									audio.play();
+									
 
 			}
 			
