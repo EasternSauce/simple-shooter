@@ -364,10 +364,10 @@
 									source.src = './sounds/shot.mp3';
 									audio.appendChild(source);
 									audio.play();
-				zajebieWasKURWY();
+				shoot();
 			}
 			
-			function zajebieWasKURWY() {
+			function shoot() {
 				//bullets
 				var bullet = new THREE.Mesh(new THREE.SphereGeometry(0.05,4,4),new THREE.MeshBasicMaterial({color:0x000}));
 				camera.updateMatrixWorld();
@@ -501,7 +501,7 @@
 									loader.load( "flamingo.js", function( geometry ) {
 
 										var material = new THREE.MeshPhongMaterial( {
-											color: 0xffffff,
+											color: 0xf00ff,
 											morphTargets: true,
 											vertexColors: THREE.FaceColors,
 											shading: THREE.FlatShading
