@@ -358,6 +358,13 @@
 			
 			function onDocumentMouseDown( event ) 
 			{
+				var audio = document.createElement('audio');
+									var source = document.createElement('source');
+									var count = Math.floor(Math.random()*13+1);
+									//source.src = './sounds/s'+count+'.wav';
+									source.src = './sounds/shot.mp3';
+									audio.appendChild(source);
+									audio.play();
 				zajebieWasKURWY();
 			}
 			
@@ -487,8 +494,8 @@
 									var audio = document.createElement('audio');
 									var source = document.createElement('source');
 									var count = Math.floor(Math.random()*13+1);
-									console.log('./sounds/s'+count+'.wav');
-									source.src = './sounds/s'+count+'.wav';
+									//source.src = './sounds/s'+count+'.wav';
+									source.src = './sounds/polymorph.mp3';
 									audio.appendChild(source);
 									audio.play();
 									var loader = new THREE.JSONLoader();
