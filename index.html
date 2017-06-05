@@ -353,7 +353,13 @@
 				camera.updateMatrixWorld();
 				loadedObject.updateMatrixWorld();
 				bullet.position.set(loadedObject.getWorldPosition().x, loadedObject.getWorldPosition().y, loadedObject.getWorldPosition().z);
-				bullet.velocity = new THREE.Vector3(camera.getWorldDirection().x*1000,camera.getWorldDirection().y*1000,camera.getWorldDirection().z*1000);
+				var vector = camera.getWorldDirection();
+
+				var axis = new THREE.Vector3( 0, 1, 0 );
+				var angle = Math.PI / 10;
+				vector.applyAxisAngle( axis, angle );
+				
+				bullet.velocity = new THREE.Vector3(vector.x,vector.y,vector.z);
 				bullet.alive = true;
 				setTimeout(function(){bullet.alive = false;scene.remove(bullet);}, 5000);
 				bullet.ray = new THREE.Ray( bullet.position, bullet.velocity.normalize());
@@ -477,7 +483,7 @@
 						}
 					}
 									
-					loadedObject.rotation.y = rot.y + (Math.PI / 2) + 0.1;
+					loadedObject.rotation.y = rot.y + (Math.PI / 2) + 0.2;
 
 
 					if ( controls.getObject().position.y < 10 ) {
