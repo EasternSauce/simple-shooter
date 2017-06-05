@@ -97,11 +97,16 @@
 			var objects = [];
 			var bullets = [];
 			var enemies = [];
+			var mixers = [];
+			var explosions = [];
+			var clipActions = [];
+			var clock = new THREE.Clock();
 			var movementSpeed = 80;
 			var totalObjects = 1000;
 			var objectSize = 10;
 			var sizeRandomness = 4000;
 			var colors = [0xFF0FFF, 0xCCFF00, 0xFF000F, 0x996600, 0xFFFFFF];
+			var animLoader = new THREE.JSONLoader();
 			/////////////////////////////////
 			var dirs = [];
 			var parts = [];
@@ -306,16 +311,23 @@
 					loadedObject.rotation.set(0,Math.PI/1.75,0);
 				} );
 				
-				for(i =0;i<100;i++)
+				for(i =0;i<10;i++)
 				{
 					var mapUrl = "./stonoga-zbigniew.jpg";
 					var map = THREE.ImageUtils.loadTexture(mapUrl);
 					var material = new THREE.MeshBasicMaterial({ map: map });
 					var myBox =   new THREE.Mesh( new THREE.CubeGeometry(10, 10, 10 ), material);
-					myBox.position.y += 10;
-					myBox.position.x += Math.random()*500+1;
-					myBox.position.z += Math.random()*500+1;
+					var x = Math.random()*500+1;
+					var y = 10;
+					var z = Math.random()*500+1;
+					myBox.position.y += y;
+					myBox.position.x += x;
+					myBox.position.z += z;
+					
+
+					
 					enemies.push(myBox);
+					//explosions.push();
 					scene.add(myBox);
 				}
 
@@ -472,6 +484,37 @@
 							{
 								if(dist(b.getWorldPosition(), enemy.getWorldPosition())<=bbox.getSize().x)
 								{
+									var loader = new THREE.JSONLoader();
+									loader.load( "flamingo.js", function( geometry ) {
+
+										var material = new THREE.MeshPhongMaterial( {
+											color: 0xffffff,
+											morphTargets: true,
+											vertexColors: THREE.FaceColors,
+											shading: THREE.FlatShading
+										} );
+										var mesh = new THREE.Mesh( geometry, material );
+
+										mesh.position.x = enemy.position.x;
+										mesh.position.y = enemy.position.y;
+										mesh.position.z = enemy.position.z;
+										mesh.scale.set( 0.05, 0.05, 0.05 );
+
+										scene.add( mesh );
+										
+										explosions.push(mesh);
+
+										var mixer = new THREE.AnimationMixer( mesh );
+										var clipAction = mixer.clipAction( geometry.animations[ 0 ] );
+										clipAction.setDuration( 1 ).setLoop( THREE.LoopOnce ).play();
+										
+										//explosions.push(explosion);
+										clipActions.push(clipAction);
+
+										mixers.push( mixer );
+
+									} );
+								
 									bullets.splice(i, 1);
 									scene.remove(b);
 									enemy.geometry.dispose();
@@ -479,6 +522,8 @@
 									var index = enemies.indexOf(enemy);
 									enemies.splice(index, 1);
 									scene.remove(enemy);
+									//var explosion = explosions[index];
+									//explosion.play();
 									break;
 								}
 							}
@@ -501,7 +546,21 @@
 					
 
 				}
+				
+				for ( var i = 0; i < mixers.length; i ++ ) {
 
+					mixers[ i ].update( delta );
+					
+					if(clipActions[i].isRunning() == false) {
+						scene.remove(explosions[i]);
+						explosions.splice(i, 1);
+						mixers.splice(i,1);
+						clipActions.splice(i, 1);
+					}
+
+				}
+
+				renderer.clear();
 				renderer.render( scene, camera );
 
 			}
