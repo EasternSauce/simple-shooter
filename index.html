@@ -301,7 +301,9 @@
 					
 					loadedObject.scale.set(0.01, 0.01, 0.01);
 
-					scene.add( loadedObject );
+					camera.add( loadedObject );
+					loadedObject.position.set(0, -1, -4);
+					loadedObject.rotation.set(0,Math.PI/1.75,0);
 				} );
 				
 				for(i =0;i<100;i++)
@@ -356,7 +358,7 @@
 				var vector = camera.getWorldDirection();
 
 				var axis = new THREE.Vector3( 0, 1, 0 );
-				var angle = Math.PI / 10;
+				var angle = Math.PI / 11;
 				vector.applyAxisAngle( axis, angle );
 				
 				bullet.velocity = new THREE.Vector3(vector.x,vector.y,vector.z);
@@ -449,7 +451,7 @@
 									
 					//loadedObject.position.set(loadedObject.x+5, 9, pos.z - Math.sin(rot.z) + lookingVector.z * 5);
 					
-					loadedObject.position.set(pos.x - Math.sin(rot.x) + lookingVector.x * 4, 9, pos.z - Math.sin(rot.z) + lookingVector.z * 4);
+					//loadedObject.position.set(pos.x - Math.sin(rot.x) + lookingVector.x * 4, 9, pos.z - Math.sin(rot.z) + lookingVector.z * 4);
 					
 					
 		
@@ -483,11 +485,9 @@
 						}
 					}
 									
-					loadedObject.rotation.y = rot.y + (Math.PI / 2) + 0.2;
-
-
+					//loadedObject.rotation.y = rot.y + (Math.PI / 2) + 0.2;
 					if ( controls.getObject().position.y < 10 ) {
-
+						
 						velocity.y = 0;
 						controls.getObject().position.y = 10;
 
