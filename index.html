@@ -182,11 +182,13 @@
 
 			var prevTime = performance.now();
 			var velocity = new THREE.Vector3();
+			var listener;
 
 			function init() {
-
+				//Load a sound and set it as the Audio object's buffer
+				listener = new THREE.AudioListener();
 				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
-
+				camera.add(listener);
 				scene = new THREE.Scene();
 				scene.fog = new THREE.Fog( 0xffffff, 0, 750 );
 
@@ -302,15 +304,15 @@
 					scene.add( loadedObject );
 				} );
 				
-				for(i =0;i<10;i++)
+				for(i =0;i<100;i++)
 				{
 					var mapUrl = "./stonoga-zbigniew.jpg";
 					var map = THREE.ImageUtils.loadTexture(mapUrl);
 					var material = new THREE.MeshBasicMaterial({ map: map });
 					var myBox =   new THREE.Mesh( new THREE.CubeGeometry(10, 10, 10 ), material);
 					myBox.position.y += 10;
-					myBox.position.x += Math.random()*100+1;
-					myBox.position.z += Math.random()*100+1;
+					myBox.position.x += Math.random()*500+1;
+					myBox.position.z += Math.random()*500+1;
 					enemies.push(myBox);
 					scene.add(myBox);
 				}
@@ -326,6 +328,17 @@
 				//
 
 				window.addEventListener( 'resize', onWindowResize, false );
+				
+				var nr = Math.random()*13+1;
+									sound = './sounds/s'+nr+'.wav';
+									var audioLoader = new THREE.AudioLoader();
+									var sound1 = new THREE.PositionalAudio( listener );
+									audioLoader.load( sound, function( buffer ) {
+										sound1.setBuffer( buffer );
+										sound1.setRefDistance( 20 );
+										sound1.play();
+									});
+									camera.add(sound1);
 
 			}
 			
@@ -338,10 +351,11 @@
 				//bullets
 				var bullet = new THREE.Mesh(new THREE.SphereGeometry(0.05,4,4),new THREE.MeshBasicMaterial({color:0x000}));
 				camera.updateMatrixWorld();
-				bullet.position.set(camera.getWorldPosition().x, camera.getWorldPosition().y, camera.getWorldPosition().z);
-				bullet.velocity = new THREE.Vector3(camera.getWorldDirection().x*5,camera.getWorldDirection().y*10,camera.getWorldDirection().z*5);
+				loadedObject.updateMatrixWorld();
+				bullet.position.set(loadedObject.getWorldPosition().x, loadedObject.getWorldPosition().y, loadedObject.getWorldPosition().z);
+				bullet.velocity = new THREE.Vector3(camera.getWorldDirection().x*1000,camera.getWorldDirection().y*1000,camera.getWorldDirection().z*1000);
 				bullet.alive = true;
-				setTimeout(function(){bullet.alive = false;scene.remove(bullet);}, 1000);
+				setTimeout(function(){bullet.alive = false;scene.remove(bullet);}, 5000);
 				bullet.ray = new THREE.Ray( bullet.position, bullet.velocity.normalize());
 				bullets.push(bullet);
 				scene.add(bullet);
@@ -441,30 +455,29 @@
 							continue;
 						}
 						bullets[i].position.add(bullets[i].velocity);
-						var b = bullets[i], bullet_pos = b.position;
+						var b = bullets[i];
 						for (var j = enemies.length-1; j >= 0; j--)
 						{
 							var enemy = enemies[j];
-							var v = enemy.geometry.vertices[0];
-							var enemy_pos = enemy.position;
-							var x = Math.abs(v.x);
-							var z = Math.abs(v.z);
-							//console.log(Math.round(p.x), Math.round(p.z), c.x, c.z, x, z);
 							var bbox = new THREE.Box3().setFromObject(enemy);
 							if (b.ray.intersectsBox(bbox))    
 							{
 								if(dist(b.getWorldPosition(), enemy.getWorldPosition())<=bbox.getSize().x)
 								{
-								bullets.splice(i, 1);
-								scene.remove(b);
-								scene.remove(enemy);
-								break;
+									bullets.splice(i, 1);
+									scene.remove(b);
+									enemy.geometry.dispose();
+									enemy.material.dispose();
+									var index = enemies.indexOf(enemy);
+									enemies.splice(index, 1);
+									scene.remove(enemy);
+									break;
 								}
 							}
 						}
 					}
 									
-					loadedObject.rotation.y = rot.y + (Math.PI / 2) + 1;
+					loadedObject.rotation.y = rot.y + (Math.PI / 2) + 0.1;
 
 
 					if ( controls.getObject().position.y < 10 ) {
