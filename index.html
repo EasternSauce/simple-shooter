@@ -338,30 +338,25 @@
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				document.body.appendChild( renderer.domElement );
 
-				//
 
 				window.addEventListener( 'resize', onWindowResize, false );
-				
+				/*turn on background music
 				var audio = document.createElement('audio');
-									var source = document.createElement('source');
-									var count = Math.floor(Math.random()*13+1);
-									//source.src = './sounds/s'+count+'.wav';
-									source.src = './sounds/background.mp3';
-									audio.appendChild(source);
-									audio.play();
-									
+				var source = document.createElement('source');
+				source.src = './sounds/background.mp3';
+				audio.appendChild(source);
+				audio.play();
+				*/					
 
 			}
 			
 			function onDocumentMouseDown( event ) 
 			{
 				var audio = document.createElement('audio');
-									var source = document.createElement('source');
-									var count = Math.floor(Math.random()*13+1);
-									//source.src = './sounds/s'+count+'.wav';
-									source.src = './sounds/shot.mp3';
-									audio.appendChild(source);
-									audio.play();
+				var source = document.createElement('source');
+				source.src = './sounds/shot.mp3';
+				audio.appendChild(source);
+				audio.play();
 				shoot();
 			}
 			
@@ -383,21 +378,6 @@
 				bullet.ray = new THREE.Ray( bullet.position, bullet.velocity.normalize());
 				bullets.push(bullet);
 				scene.add(bullet);
-				/*raycasty samo zuo
-				raycaster.setFromCamera( new THREE.Vector2(), camera );
-                var intersects = raycaster.intersectObjects( scene.children, true );
-                if (intersects[0])
-				{
-					console.log("hit");
-					for(i=0;i<intersects.length;i++)
-					{
-						console.log(intersects[i].object.geometry.type);
-						scene.remove(intersects[i].object);
-						intersects[i].object.geometry.dispose();
-						intersects[i].object.material.dispose();
-					}
-				}
-				*/
 			}
 			
 			function onWindowResize() {
@@ -465,7 +445,6 @@
 					var rot = controls.getObject().rotation;
 					var lookingVector = camera.getWorldDirection();
 									
-					//loadedObject.position.set(loadedObject.x+5, 9, pos.z - Math.sin(rot.z) + lookingVector.z * 5);
 					
 					//loadedObject.position.set(pos.x - Math.sin(rot.x) + lookingVector.x * 4, 9, pos.z - Math.sin(rot.z) + lookingVector.z * 4);
 					
@@ -490,8 +469,6 @@
 								{
 									var audio = document.createElement('audio');
 									var source = document.createElement('source');
-									var count = Math.floor(Math.random()*13+1);
-									//source.src = './sounds/s'+count+'.wav';
 									source.src = './sounds/polymorph.mp3';
 									audio.appendChild(source);
 									audio.play();
